@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\SteamController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return response()->json(['Pigilwin Api']);
+});
+
+Route::prefix('steam/{steamId}')->group(function () {
+    Route::prefix('/games')->group(function () {
+        Route::get('', [SteamController::class, 'games']);
+        Route::get('/{gameId}', [SteamController::class, 'achievements']);
+    });
 });
