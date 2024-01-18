@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\DataObjects\Achievement;
 use App\DataObjects\Game;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,11 @@ readonly class SteamRepository
         $url = $this->createUrl('IPlayerService/GetOwnedGames/v0001', [
             'include_appinfo' => 'true'
         ]);
-        $response = $this->client->get($url);
+        try {
+            $response = $this->client->get($url);
+        } catch (GuzzleException $e) {
+            return collect();
+        }
 
         /**
          * Ensure the status code is acceptable
@@ -60,7 +65,11 @@ readonly class SteamRepository
             'appid' => $gameId
         ]);
 
-        $response = $this->client->get($url);
+        try {
+            $response = $this->client->get($url);
+        } catch (GuzzleException $e) {
+            return collect();
+        }
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             return collect();
